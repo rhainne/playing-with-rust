@@ -10,7 +10,7 @@ use std::cmp::Ordering;
 
 
 fn chapter_01() {
-    /* Declaración de variables mutables, print y readline */
+    /* Declaración de variables mutables, print macro y read_line */
     println!("What is your name?");
     let mut name = String::new();
     let greeting = "Nice to meet you";
@@ -22,8 +22,9 @@ fn chapter_01() {
 }
 
 fn chapter_02() {
-    /* Declaración de constantes que no pueden deducir el tipo de datos. 
-    * Declaración de la misma variable dos veces pero con distinto tipo de dato
+    /* 
+    * Declaración de constantes que no pueden deducir el tipo de datos. 
+    * Declaración de la misma variable dos veces pero con distinto tipo de dato (shadowing)
     */
     const ONE_MIL: u32 = 1_000_000;
     const PI: f32 = 3.141592;
@@ -33,10 +34,22 @@ fn chapter_02() {
     age = age + 1;
 
     println!("I'm {} and I want ${}", age, ONE_MIL);
+
+    
+}
+
+fn shadowing_example() {
+    /* Ejemplo de Shadowing del Rust Book Nos permite reusar un nombre adecuado para ambos conceptos. */
+    let spaces = "   ";
+    let spaces = spaces.len();
+
+    /* Si intentásemos esto con una variable mutable tendríamos un error de compilación por type missmatch */
+    // let mut spaces = "   ";
+    // spaces = spaces.len(); // compile error
 }
 
 fn chapter_03() {
-    /* Valores máximos algunos  tipos de datos */
+    /* Valores máximos algunos tipos de datos */
     println!("Max u32: {}", u32::MAX);
     println!("Max u64: {}", u64::MAX);
     println!("Max usize: {}", usize::MAX);
@@ -46,13 +59,13 @@ fn chapter_03() {
 }
 
 fn chapter_04() {
-    /* Deducción de los tipos de datos en base a los que asignamos */
+    /* Deducción de los tipos de datos en base a los valores que asignamos */
     let is_true = true;
     let my_grade = 'A';
 }
 
 fn chapter_05() {
-    /* Distintos tipos con distinta precision */
+    /* Distintos tipos de dato con distinta precision */
     let num_1: f32 = 1.111111111111111;
     println!("f32: {}", num_1 + 0.111111111111111);
     let num_2: f64 = 1.111111111111111;
@@ -97,13 +110,18 @@ fn chapter_09() {
     let mut my_age = 12;
     let can_vote = if my_age >= 18 { true } else { false };
     println!("Can vote : {}", can_vote);
+
+    /* Does the compilar automactically optimize this code as the var being evaluated is a constant? */
+    let constant_age = 12;
+    let constant_can_vote = if constant_age >= 18 { true } else { false };
+    println!("Can vote : {}", constant_can_vote);
 }
 
 fn chapter_10() {
     /* match with range of values */
     let age2 = 1;
     match age2 {
-        1..=18 => println!("Important birthday"),
+        1..=18 => { println!("Important birthday"); println!("Important birthday twice"); } , // you can execute a block instead of single statement
         21 | 50 => println!("21 o 50 birthday"),
         65..=i32::MAX => println!("Viejo birthday"),
         _ => println!("Not an important birthday"),
@@ -111,13 +129,14 @@ fn chapter_10() {
 }
 
 fn chapter_11() {
-    /* match + Ordering*/
+    /* match + ordering */
     let my_age = 18;
     let voting_age = 18;
+
     match my_age.cmp(&voting_age) {
-        Ordering::Less =>  println!("Cannot vote"),
-        Ordering::Greater =>  println!("Can vote"),
-        Ordering::Equal =>  println!("Congrats, welcome to the democracy party"),
+        Ordering::Less => println!("Cannot vote"),
+        Ordering::Greater => println!("Can vote"),
+        Ordering::Equal => println!("Congrats, welcome to the democracy party"),
     }
 }
 
@@ -127,7 +146,7 @@ fn chapter_12() {
     println!("1st: {}", arr_1[0]);
     println!("length: {}", arr_1.len());
 
-    /* Looping arrays */
+    /* Looping arrays with loop*/
     let arr_2 = [1,2,3,4,6,7,8,9];
     let mut index = 0;
     loop {
@@ -159,9 +178,23 @@ fn chapter_14() {
     let arr_2 = [1,2,3,4,6,7,8,9];
     let mut index = 0;
 
+
     for val in arr_2.iter() {
         println!("val: {}", val);
     }
+
+    for mut val in arr_2 {
+        val = 999; // you can mutate val but youre not changing the values in arr_2
+        println!("val: {}", val);
+    }
+    println!("val: {:?}", arr_2);
+
+    for mut val in arr_2.iter() {
+        val = &777; // you can mutate val but youre not changing the referenced values in arr_2
+        println!("val: {}", val);
+    }
+    println!("val: {:?}", arr_2);
+
 }
 
 fn chapter_15() {
@@ -169,20 +202,25 @@ fn chapter_15() {
 
     println!("Name: {}", my_tuple.1);
     let(v1, v2, v3) = my_tuple;
-
     println!("Name: {}", v1);
 
+    let my_tuple_2: (u8, &str, f64) = (2, "adrus", 0.12341);
+    println!("second tuple: {:?}", my_tuple_2);
+    println!("string reference to adrus: {}", my_tuple_2.1);
+    println!("string reference to adrus: {:?}", my_tuple_2.1); // buscar mas info del operador ':?'. Veo que cuando imprimo un String o &str usandolo conservan las "" 
 }
 
 fn chapter_16() {
     let mut st1 = String::new();
     st1.push('A');
     st1.push_str("drus");
+    println!("{}", st1);
+
     for word in st1.split_whitespace() {
         println!("{}", word);
     }
 
-    let st2 = st1.replace("A", "Another");
+    let st2 = st1.replace("d", "Another");
     println!("{}", st2);
 }
 
@@ -191,14 +229,19 @@ fn chapter_17() {
     let mut v1: Vec<char> = st3.chars().collect();
     v1.sort(); //ordenar
     v1.dedup(); // quitar duplicados
-    for char in v1 {
-        println!("{}", char); // loop de un vector
+
+    for char in v1 { // loop de un vector
+        println!("{}", char); 
     }
 
-    /* Usar un string para construir otro? Pasar una referencia para construir una nueva instancia de string? */
+    /* Pasar una referencia &str para construir una nueva instancia de string */
     let st4 = "Random string";
     let mut st5: String = st4.to_string();
     println!("{}", st5);
+
+    let new_str = 12.4;
+    let mut mut_str: String = new_str.to_string(); // string from f64
+    println!("{}", mut_str);
 
     /* Convertir un string en un array de bytes */
     let byte_arr1 = st5.as_bytes();
@@ -222,9 +265,10 @@ fn chapter_17() {
     for char in st8.bytes() {
         println!("{}", char);
     }
+    println!("{:?}", st8.bytes()); // Bytes(Copied { it: Iter([]) })
 
     // println!("{}", st6); // sentencia ilegal. borrowed of moved value. Si hubiesemos usado .clone() en la asignacion de st8, esta sentencia si sería legal. 
-    println!("{}", st7); // sentencia legal, porque en la asignación de st8 hemos pasado la referencia de st7
+    println!("{}", st7); // sentencia legal, porque en la asignación de st8 hemos pasado la referencia a st7, no su valor
 
 }
 
@@ -701,5 +745,6 @@ fn bank_with_smart_pointers() {
 }
 
 fn main() {
-    bank_with_smart_pointers();
+    // bank_with_smart_pointers();
+    chapter_17();
 }
