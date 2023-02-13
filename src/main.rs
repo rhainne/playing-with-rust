@@ -744,7 +744,58 @@ fn bank_with_smart_pointers() {
 
 }
 
+fn celsius_fahrenheit_converter(celsious: f64) -> f64 {
+    return (celsious * 9.0 / 5.0) + 32.0;
+}
+
+fn fahrenheit_celsius_converter(fahrenheit: f64) -> f64 {
+    return (fahrenheit - 32.0) * 5.0 / 9.0;
+}
+
+fn conversions_executor() {
+    let f = celsius_fahrenheit_converter(23.9512);
+    let c = fahrenheit_celsius_converter(73.4);
+    println!("{:.2}", f);
+    println!("{:.2}", c);
+}
+
+fn nth_fibonacci_number(n: f64) -> f64 {
+    /* Generate the nth Fibonacci number */
+    let nth_fibbo_number = (1.0 + ((5.0 as f64).sqrt())).powf(n) / ((2.0_f64).powf(n) * (5.0 as f64).sqrt());
+    
+    nth_fibbo_number
+}
+
+fn nth_fibonacci_n(n: u32) -> u32 {
+    /* Generate the nth Fibonacci number */
+    let mut nth_fibbo_number = 0;
+
+    let mut f_n_1 = 0;
+    let mut f_n_2 = 1;
+
+    if (n == 0) { return 0; }
+    else if (n == 1) { return 1; }
+    else {
+        for i in 1..(n + 1) {
+            if (i == n) {
+                nth_fibbo_number = f_n_1 + f_n_2;
+            }
+            else if (i % 2 == 0) { 
+                f_n_1 += f_n_2;
+            } else {
+                f_n_2 += f_n_1;
+            }
+
+            println!("1: {}", f_n_1);
+            println!("2: {}", f_n_2);
+        }
+    }
+    
+    nth_fibbo_number
+}
+
 fn main() {
-    // bank_with_smart_pointers();
-    chapter_17();
+    let fifth = nth_fibonacci_n(15);
+
+    println!("{}", fifth);
 }
